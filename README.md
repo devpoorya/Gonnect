@@ -13,9 +13,9 @@ An elegant HTTP/HTTP2 library with great features
   Add The Following Dependency To Root Build.gradle file
   
   
- 	dependencies {
-		compile 'com.github.User:Repo:Tag'
-	}
+ 	 dependencies {
+		compile 'com.github.poorya-abbasi:Gonnect:0.1.0'
+	  }
   
   And Add This To build.gradle File for Your Module
   
