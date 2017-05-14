@@ -11,6 +11,7 @@ import java.util.Set;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
+import okhttp3.Headers;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -45,6 +46,8 @@ public class Gonnect {
         }
         return requestBody;
     }
+
+    //Simple Requests
 
     public static void sendRequest(String url, ContentValues values, final ResponseListener listener){
 
@@ -101,6 +104,33 @@ public class Gonnect {
 
     }
 
+    public static void sendRequest(String url, ContentValues values, final ResponseFailureListener failureListener){
+
+        RequestBody requestBody=setupRequestBody(values);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+
+                failureListener.responseFailed(e);
+
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+
+
+
+
+            }
+        });
+
+    }
+
     public static void sendRequest(String url, ContentValues values, final ResponseSuccessListener listener,final ResponseFailureListener failureListener){
 
         RequestBody requestBody=setupRequestBody(values);
@@ -129,13 +159,47 @@ public class Gonnect {
 
     }
 
-    public static void sendRequest(String url, ContentValues values, final ResponseFailureListener failureListener){
+    //Pro Requests
+
+    public static void sendProRequest(String url, ContentValues values, final FullResponseListener listener,Headers headers){
 
         RequestBody requestBody=setupRequestBody(values);
 
         Request request = new Request.Builder()
                 .url(url)
                 .post(requestBody)
+                .headers(headers)
+                .build();
+
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+
+
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+
+                FullResponseStructure fullResponseStructure=new FullResponseStructure();
+                fullResponseStructure.body=response.body().string();
+                fullResponseStructure.headers=response.headers();
+
+                listener.responseRecieved(fullResponseStructure);
+
+
+            }
+        });
+
+    }
+
+    public static void sendProRequest(String url, ContentValues values, final FullResponseListener listener,final ResponseFailureListener failureListener,Headers headers){
+
+        RequestBody requestBody=setupRequestBody(values);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .headers(headers)
                 .build();
 
 
@@ -148,8 +212,41 @@ public class Gonnect {
 
             @Override public void onResponse(Call call, Response response) throws IOException {
 
+                FullResponseStructure fullResponseStructure=new FullResponseStructure();
+                fullResponseStructure.body=response.body().string();
+                fullResponseStructure.headers=response.headers();
+
+                listener.responseRecieved(fullResponseStructure);
 
 
+            }
+        });
+
+    }
+
+    //Launch Activity Requests
+
+    public static void sendRequestAndLaunchActivity(String url, ContentValues values, final Context context, final Class activity){
+
+        RequestBody requestBody=setupRequestBody(values);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+
+
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+
+                Intent intent=new Intent(context,activity);
+                intent.putExtra("response",response.body().string());
+                context.startActivity(new Intent(context,activity));
 
             }
         });
@@ -186,55 +283,7 @@ public class Gonnect {
 
     }
 
-    public static void sendRequestAndLaunchActivity(String url, ContentValues values, final Context context, final Class activity){
-
-        RequestBody requestBody=setupRequestBody(values);
-
-        Request request = new Request.Builder()
-                .url(url)
-                .post(requestBody)
-                .build();
-
-
-        okHttpClient.newCall(request).enqueue(new Callback() {
-            @Override public void onFailure(Call call, IOException e) {
-
-
-            }
-
-            @Override public void onResponse(Call call, Response response) throws IOException {
-
-                  Intent intent=new Intent(context,activity);
-                intent.putExtra("response",response.body().string());
-                context.startActivity(new Intent(context,activity));
-
-            }
-        });
-
-    }
-
-    public static void getData(String url, final ResponseSuccessListener listener){
-
-
-        Request request=new Request.Builder()
-                .url(url)
-                .build();
-
-        okHttpClient.newCall(request).enqueue(new Callback() {
-            @Override public void onFailure(Call call, IOException e) {
-
-
-            }
-
-            @Override public void onResponse(Call call, Response response) throws IOException {
-
-
-                listener.responseRecieved(response.body().string());
-
-            }
-        });
-
-    }
+    //Simple Get Data
 
     public static void getData(String url, final ResponseListener listener){
 
@@ -260,7 +309,7 @@ public class Gonnect {
 
     }
 
-    public static void getData(String url, final ResponseSuccessListener listener,final ResponseFailureListener failureListener){
+    public static void getData(String url, final ResponseSuccessListener listener){
 
 
         Request request=new Request.Builder()
@@ -270,7 +319,6 @@ public class Gonnect {
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override public void onFailure(Call call, IOException e) {
 
-                failureListener.responseFailed(e);
 
             }
 
@@ -307,6 +355,56 @@ public class Gonnect {
 
     }
 
+    public static void getData(String url, final ResponseSuccessListener listener,final ResponseFailureListener failureListener){
+
+
+        Request request=new Request.Builder()
+                .url(url)
+                .build();
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+
+                failureListener.responseFailed(e);
+
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+
+
+                listener.responseRecieved(response.body().string());
+
+            }
+        });
+
+    }
+
+    //Launch Activity Get Data(s)
+
+    public static void getDataAndLaunchActivity(String url,final Class activity, final Context context){
+
+
+        Request request=new Request.Builder()
+                .url(url)
+                .build();
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+
+
+
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+
+                Intent intent=new Intent(context,activity);
+                intent.putExtra("response",response.body().string());
+                context.startActivity(new Intent(context,activity));
+            }
+        });
+
+    }
+
     public static void getDataAndLaunchActivity(String url, final ResponseFailureListener failureListener, final Class activity, final Context context){
 
 
@@ -331,7 +429,9 @@ public class Gonnect {
 
     }
 
-    public static void getDataAndLaunchActivity(String url,final Class activity, final Context context){
+    //Pro Get Data(s)
+
+    public static void getFullData(String url, final FullResponseListener listener){
 
 
         Request request=new Request.Builder()
@@ -342,27 +442,49 @@ public class Gonnect {
             @Override public void onFailure(Call call, IOException e) {
 
 
-
             }
 
             @Override public void onResponse(Call call, Response response) throws IOException {
 
-                  Intent intent=new Intent(context,activity);
-                intent.putExtra("response",response.body().string());
-                context.startActivity(new Intent(context,activity));
+                FullResponseStructure fullResponseStructure=new FullResponseStructure();
+                fullResponseStructure.body=response.body().string();
+                fullResponseStructure.headers=response.headers();
+
+                listener.responseRecieved(fullResponseStructure);
+
             }
         });
 
     }
 
-    public static void responseController(String target,String response){
+    public static void getFullData(String url, final FullResponseListener listener,final ResponseFailureListener failureListener){
 
 
+        Request request=new Request.Builder()
+                .url(url)
+                .build();
 
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
 
+                failureListener.responseFailed(e);
 
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+
+                FullResponseStructure fullResponseStructure=new FullResponseStructure();
+                fullResponseStructure.body=response.body().string();
+                fullResponseStructure.headers=response.headers();
+
+                listener.responseRecieved(fullResponseStructure);
+
+            }
+        });
 
     }
+
+    //Interfaces
 
     public interface ResponseSuccessListener{
 
@@ -382,8 +504,22 @@ public class Gonnect {
 
     }
 
+    public interface FullResponseListener{
+
+        public void responseRecieved(FullResponseStructure frs);
+
+    }
+
+    //ResponseController
+
+    public static void responseController(String target,String response){
 
 
+
+
+
+
+    }
 
 
 
