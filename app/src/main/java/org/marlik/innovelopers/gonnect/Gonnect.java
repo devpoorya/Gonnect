@@ -59,6 +59,34 @@ public class Gonnect {
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override public void onFailure(Call call, IOException e) {
 
+                listener.responseRecieved(false,e.getMessage().toString());
+
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+
+
+                listener.responseRecieved(true,response.body().string());
+
+
+            }
+        });
+
+    }
+
+    public static void sendRequest(String url, ContentValues values, final ResponseSuccessListener listener){
+
+        RequestBody requestBody=setupRequestBody(values);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+
 
             }
 
@@ -73,7 +101,7 @@ public class Gonnect {
 
     }
 
-    public static void sendRequest(String url, ContentValues values, final ResponseListener listener,final ResponseFailureListener failureListener){
+    public static void sendRequest(String url, ContentValues values, final ResponseSuccessListener listener,final ResponseFailureListener failureListener){
 
         RequestBody requestBody=setupRequestBody(values);
 
@@ -185,7 +213,7 @@ public class Gonnect {
 
     }
 
-    public static void getData(String url, final ResponseListener listener){
+    public static void getData(String url, final ResponseSuccessListener listener){
 
 
         Request request=new Request.Builder()
@@ -208,7 +236,31 @@ public class Gonnect {
 
     }
 
-    public static void getData(String url, final ResponseListener listener,final ResponseFailureListener failureListener){
+    public static void getData(String url, final ResponseListener listener){
+
+
+        Request request=new Request.Builder()
+                .url(url)
+                .build();
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+
+                listener.responseRecieved(false,e.getMessage().toString());
+
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+
+
+                listener.responseRecieved(true,response.body().string());
+
+            }
+        });
+
+    }
+
+    public static void getData(String url, final ResponseSuccessListener listener,final ResponseFailureListener failureListener){
 
 
         Request request=new Request.Builder()
@@ -312,7 +364,7 @@ public class Gonnect {
 
     }
 
-    public interface ResponseListener{
+    public interface ResponseSuccessListener{
 
         public void responseRecieved(String response);
 
@@ -321,6 +373,12 @@ public class Gonnect {
     public interface ResponseFailureListener{
 
         public void responseFailed(IOException exception);
+
+    }
+
+    public interface  ResponseListener{
+
+        public void responseRecieved(boolean isSuccess,String errorOrResponse);
 
     }
 
