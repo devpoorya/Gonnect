@@ -21,21 +21,21 @@ An elegant HTTP/HTTP2 library with great features
   
   # Usage Form
   
-    ## Getting Data 
+   ## Getting Data 
       
         Gonnect.getData(url,ResponseListener(Optional),ResponseFailureListener(Optional));
         Or
         Gonnect.getDataAndLaunchActivity(url,ResponseFailureListener(Optional),SecondActivity.class,context);
         
-    ## Sending Post Request
+   ## Sending Post Request
         ContentValues cv=new ContentValues();
         cv.put("user_token",token);
         Gonnect.sendRequest(url,cv,ResponseListener(Optional),ResponseFailureListener(Optional));
         Or
         Gonnect.sendRequestAndLaunchActivity(url,cv,ResponseFailureListener(Optional),SecondActivity.class,context);
-    ## How To Get The Data When You Pass It To Another Activity
-      Gonnect Automatically puts the data in the extras so
-      In The SecondActivity Do This
+   ## How To Get The Data When You Pass It To Another Activity
+ 	  Gonnect Automatically puts the data in the extras so
+     	  In The SecondActivity Do This
           Bundle b=getIntent().getExtras();
           String response=b.getString("response");
             
