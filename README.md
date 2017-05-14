@@ -14,7 +14,7 @@ An elegant HTTP/HTTP2 library with great features
   
   
  	 dependencies {
-		compile 'com.github.poorya-abbasi:Gonnect:0.1.1'
+		compile 'com.github.poorya-abbasi:Gonnect:v1.1'
 	  }
   
   And Add This To build.gradle File for Your Module
