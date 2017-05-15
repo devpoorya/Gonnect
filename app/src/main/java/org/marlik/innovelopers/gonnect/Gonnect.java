@@ -161,6 +161,36 @@ public class Gonnect {
 
     //Pro Requests
 
+    public static void sendProRequest(String url, ContentValues values, final FullResponseListener listener){
+
+        RequestBody requestBody=setupRequestBody(values);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+
+
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+
+                FullResponseStructure fullResponseStructure=new FullResponseStructure();
+                fullResponseStructure.body=response.body().string();
+                fullResponseStructure.headers=response.headers();
+
+                listener.responseRecieved(fullResponseStructure);
+
+
+            }
+        });
+
+    }
+
     public static void sendProRequest(String url, ContentValues values, final FullResponseListener listener,Headers headers){
 
         RequestBody requestBody=setupRequestBody(values);
@@ -175,6 +205,37 @@ public class Gonnect {
         okHttpClient.newCall(request).enqueue(new Callback() {
             @Override public void onFailure(Call call, IOException e) {
 
+
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+
+                FullResponseStructure fullResponseStructure=new FullResponseStructure();
+                fullResponseStructure.body=response.body().string();
+                fullResponseStructure.headers=response.headers();
+
+                listener.responseRecieved(fullResponseStructure);
+
+
+            }
+        });
+
+    }
+
+    public static void sendProRequest(String url, ContentValues values, final FullResponseListener listener,final ResponseFailureListener failureListener){
+
+        RequestBody requestBody=setupRequestBody(values);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .build();
+
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+
+                failureListener.responseFailed(e);
 
             }
 
@@ -457,11 +518,66 @@ public class Gonnect {
 
     }
 
+    public static void getFullData(String url, final FullResponseListener listener,Headers headers){
+
+
+        Request request=new Request.Builder()
+                .url(url)
+                .headers(headers)
+                .build();
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+
+
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+
+                FullResponseStructure fullResponseStructure=new FullResponseStructure();
+                fullResponseStructure.body=response.body().string();
+                fullResponseStructure.headers=response.headers();
+
+                listener.responseRecieved(fullResponseStructure);
+
+            }
+        });
+
+    }
+
     public static void getFullData(String url, final FullResponseListener listener,final ResponseFailureListener failureListener){
 
 
         Request request=new Request.Builder()
                 .url(url)
+                .build();
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+
+                failureListener.responseFailed(e);
+
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+
+                FullResponseStructure fullResponseStructure=new FullResponseStructure();
+                fullResponseStructure.body=response.body().string();
+                fullResponseStructure.headers=response.headers();
+
+                listener.responseRecieved(fullResponseStructure);
+
+            }
+        });
+
+    }
+
+    public static void getFullData(String url, final FullResponseListener listener,final ResponseFailureListener failureListener,Headers headers){
+
+
+        Request request=new Request.Builder()
+                .url(url)
+                .headers(headers)
                 .build();
 
         okHttpClient.newCall(request).enqueue(new Callback() {

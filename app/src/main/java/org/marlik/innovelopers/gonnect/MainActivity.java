@@ -24,6 +24,12 @@ public class MainActivity extends AppCompatActivity {
         },SecondActivity.class,getApplicationContext());
 
 
+        Gonnect.FullResponseListener fullResponseListener=new Gonnect.FullResponseListener() {
+            @Override
+            public void responseRecieved(FullResponseStructure frs) {
+
+            }
+        };
 
 
     }
