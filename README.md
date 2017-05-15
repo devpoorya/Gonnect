@@ -34,8 +34,34 @@ An elegant HTTP/HTTP2 library with great features
         Or
         Gonnect.sendRequestAndLaunchActivity(url,cv,ResponseFailureListener(Optional),SecondActivity.class,context);
    ## How To Get The Data When You Pass It To Another Activity
- 	  Gonnect Automatically puts the data in the extras so
-     	  In The SecondActivity Do This
+ 	  Gonnect Automatically puts the data in the extras In The SecondActivity:
           Bundle b=getIntent().getExtras();
           String response=b.getString("response");
+  
+  ## Need Headers? Simple Again
+  	  Gonnect.getFullData(url,fullResponseListener,responseFailureListener(Optional),headers(Optional);
+	  The listener gives you a FullResponseStructure:
+			FullResponseListener fullResponseListener=new FullResponseListener() {
+           			@Override
+          			public void responseRecieved(FullResponseStructure frs) {
+
+					Headers headers=frs.headers;
+					String response=frs.body;
+					
+           			 }
+       			 };
+## And Sending a request with headers
+	 Gonnect.sendProRequest(url,cv,fullReponseListener,responseFailureListener(Optional),headers(optional);
+	 The listener gives you a FullResponseStructure:
+			FullResponseListener fullResponseListener=new FullResponseListener() {
+           			@Override
+          			public void responseRecieved(FullResponseStructure frs) {
+
+					Headers headers=frs.headers;
+					String response=frs.body;
+					
+           			 }
+       			 };
+
+  	  
             
