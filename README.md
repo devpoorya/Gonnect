@@ -37,6 +37,9 @@ An elegant HTTP/HTTP2 library with great features
  	  Gonnect Automatically puts the data in the extras In The SecondActivity:
           Bundle b=getIntent().getExtras();
           String response=b.getString("response");
+	  
+	  
+  # There Are Some Known Bugs In The Pro Features Listeners I'm Going To Fix It ASAP 
   
   ## Need Headers? Simple Again
   	  Gonnect.getFullData(url,fullResponseListener,responseFailureListener(Optional),headers(Optional);
@@ -63,5 +66,5 @@ An elegant HTTP/HTTP2 library with great features
            			 }
        			 };
 
- # There Are Some Known Bugs In The Pro Features Listeners I'm Going To Fix It ASAP 	  
+ 	  
  
