@@ -159,6 +159,34 @@ public class Gonnect {
 
     }
 
+    public static void sendCancelableRequest(String url, ContentValues values, String tag,final ResponseSuccessListener listener,final ResponseFailureListener failureListener){
+
+        RequestBody requestBody=setupRequestBody(values);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .tag(tag)
+                .build();
+
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+
+                failureListener.responseFailed(e);
+
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+
+
+                listener.responseRecieved(response.body().string());
+
+
+            }
+        });
+
+    }
     //Pro Requests
 
     public static void sendProRequest(String url, ContentValues values, final FullResponseListener listener){
@@ -337,7 +365,38 @@ public class Gonnect {
                 Intent intent=new Intent(context,activity);
                 intent.putExtra("response",response.body().string());
                 context.startActivity(new Intent(context,activity));
-                
+
+
+            }
+        });
+
+    }
+
+    public static void sendCancelableRequestAndLaunchActivity(String url, String tag,ContentValues values, final ResponseFailureListener failureListener, final Context context, final Class activity){
+
+        RequestBody requestBody=setupRequestBody(values);
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(requestBody)
+                .tag(tag)
+                .build();
+
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+
+                failureListener.responseFailed(e);
+
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+
+
+                Intent intent=new Intent(context,activity);
+                intent.putExtra("response",response.body().string());
+                context.startActivity(new Intent(context,activity));
+
 
             }
         });
@@ -440,6 +499,31 @@ public class Gonnect {
 
     }
 
+    public static void getCancelableData(String url,String tag, final ResponseSuccessListener listener,final ResponseFailureListener failureListener){
+
+
+        Request request=new Request.Builder()
+                .url(url)
+                .tag(tag)
+                .build();
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+
+                failureListener.responseFailed(e);
+
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+
+
+                listener.responseRecieved(response.body().string());
+
+            }
+        });
+
+    }
+
     //Launch Activity Get Data(s)
 
     public static void getDataAndLaunchActivity(String url,final Class activity, final Context context){
@@ -471,6 +555,31 @@ public class Gonnect {
 
         Request request=new Request.Builder()
                 .url(url)
+                .build();
+
+        okHttpClient.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+
+                failureListener.responseFailed(e);
+
+            }
+
+            @Override public void onResponse(Call call, Response response) throws IOException {
+
+                Intent intent=new Intent(context,activity);
+                intent.putExtra("response",response.body().string());
+                context.startActivity(new Intent(context,activity));
+            }
+        });
+
+    }
+
+    public static void getCancelableDataAndLaunchActivity(String url,String tag, final ResponseFailureListener failureListener, final Class activity, final Context context){
+
+
+        Request request=new Request.Builder()
+                .url(url)
+                .tag(tag)
                 .build();
 
         okHttpClient.newCall(request).enqueue(new Callback() {
@@ -622,7 +731,7 @@ public class Gonnect {
 
     public interface FullResponseListener{
 
-        public void responseRecieved(FullResponseStructure frs);
+        public void responseRecieved(FullResponseStructure fullResponseStructure);
 
     }
 
@@ -634,6 +743,18 @@ public class Gonnect {
 
 
 
+    }
+
+    public static void cancelRequest(String tag){
+
+        for(Call call : okHttpClient.dispatcher().queuedCalls()) {
+            if(call.request().tag().equals(tag))
+                call.cancel();
+        }
+        for(Call call : okHttpClient.dispatcher().runningCalls()) {
+            if(call.request().tag().equals(tag))
+                call.cancel();
+        }
 
     }
 
