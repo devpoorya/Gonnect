@@ -39,6 +39,19 @@ An elegant HTTP/HTTP2 library with great features
           String response=b.getString("response");
 	  
 	  
+  ## Want To Cancel The Request? Simple
+  	  Gonnect.getCancelableData(url,tag, new Gonnect.ResponseSuccessListener() {
+            @Override
+            public void responseRecieved(String response) {
+                
+            }
+        }, new Gonnect.ResponseFailureListener() {
+            @Override
+            public void responseFailed(IOException exception) {
+
+            }
+        });
+		Gonnect.cancelRequest(tag);
   # There Are Some Known Bugs In The Pro Features Listeners I'm Going To Fix It ASAP 
   
   ## Need Headers? Simple Again
