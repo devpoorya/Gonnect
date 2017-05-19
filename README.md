@@ -53,7 +53,7 @@ An elegant HTTP/HTTP2 library with great features
         });
   ## And Cancel It
    	Gonnect.cancelRequest(tag);
-  # There Are Some Known Bugs In The Pro Features Listeners I'm Going To Fix It ASAP 
+  ## There Are Some Known Bugs In The Pro Features Listeners I'm Going To Fix It ASAP 
   
   ## Need Headers? Simple Again
   	  Gonnect.getFullData(url,fullResponseListener,responseFailureListener(Optional),headers(Optional);
