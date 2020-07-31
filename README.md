@@ -1,86 +1,102 @@
 # Gonnect
-An elegant HTTP/HTTP2 library with great features
+An elegant Android HTTP/HTTP2 library with great features.
 
-# Getting Started With Gonnect
+## Installation
 
-  	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
-  
-  Add The Following Dependency To Root Build.gradle file
-  
-  
- 	 dependencies {
-		compile 'com.github.poorya-abbasi:Gonnect:v1.3'
-	  }
-  
-  And Add This To build.gradle File for Your Module
-  
-  # Usage Form
-  
-   ## Getting Data 
-      
-        Gonnect.getData(url,ResponseListener(Optional),ResponseFailureListener(Optional));
-        Or
-        Gonnect.getDataAndLaunchActivity(url,ResponseFailureListener(Optional),SecondActivity.class,context);
+To add Gonnect to your project, simply add the following dependency to your module's `build.gradle` file:
+
+    implementation 'com.github.poorya-abbasi:Gonnect:v1.3'
+
+Alternatively, add `app/src/main/java/org/marlik/innovelopers/gonnect/Gonnect.java` from this repository to your project (don't forget to fix package name in the first line of the file) and then add the following dependencies to your module's `build.gradle` file:
+
+    implementation 'com.squareup.okhttp3:okhttp:3.14.6'
+    implementation 'com.android.volley:volley:1.1.1'
+
+## Usage
+
+### **Sending GET requests**
+
+    // "tag" is a unique string for the request, which can be used later to cancel the request
+
+    Gonnect.getCancelableData(urlString, CurrentActivity.this, tag, response -> {
+
+        // This part is called when the request is successful
+        // "response" will contain the recevied data
+
+    }, exception -> {
+
+        // This part is called when the request is unsuccessful
+        // "exception" is an instance of IOException
+
+    });
+
+### **Sending GET Requests and launching an activity afterwards**
+    // "tag" is a unique string for the request, which can be used later to cancel the request
+
+    Gonnect.getCancelableDataAndLaunchActivity(urlString, tag, exception -> {
+            
+            // This part is called when the request is unsuccessful
+            // "exception" is an instance of IOException
+
+    }, DestinationActivity.class, CurrentActivity.this);
+
+The result is automatically saved into the "response" extra string in the destination activity:
+
+    // In DestinationActivity.java
+
+    String response = getIntent().getStringExtra("response")
+
+
+### **Sending POST requests**
+
+    ContentValues cv = new ContentValues();
+    cv.put("firstParameter", "someValue");
+    cv.put("secondParameter", "someOtherValue");
+
+    // "tag" is a unique string for the request, which can be used later to cancel the request
+
+    Gonnect.sendCancelableRequest(urlString, CurrentActivity.this, cv, tag, response -> {
+
+        // This part is called when the request is successful
+        // "response" will contain the recevied data
+
+    }, exception -> {
         
-   ## Sending Post Request
-        ContentValues cv=new ContentValues();
-        cv.put("user_token",token);
-        Gonnect.sendRequest(url,cv,ResponseListener(Optional),ResponseFailureListener(Optional));
-        Or
-        Gonnect.sendRequestAndLaunchActivity(url,cv,ResponseFailureListener(Optional),SecondActivity.class,context);
-   ## How To Get The Data When You Pass It To Another Activity
- 	  Gonnect Automatically puts the data in the extras In The SecondActivity:
-          Bundle b=getIntent().getExtras();
-          String response=b.getString("response");
-	  
-	  
-  ## Want To Cancel The Request? Simple
-  	  Gonnect.getCancelableData(url,tag, new Gonnect.ResponseSuccessListener() {
-            @Override
-            public void responseRecieved(String response) {
-                
-            }
-        }, new Gonnect.ResponseFailureListener() {
-            @Override
-            public void responseFailed(IOException exception) {
+        // This part is called when the request is unsuccessful
+        // "exception" is an instance of IOException
 
-            }
-        });
-  ## And Cancel It
-   	Gonnect.cancelRequest(tag);
-  ## There Are Some Known Bugs In The Pro Features Listeners I'm Going To Fix It ASAP The Temp Soloution ?
-  
-  ## Download The FullResponseListener Class From The Module And Add It To Your Project To Use Pro Features
-  
-  ## Need Headers? Simple Again
-  	  Gonnect.getFullData(url,fullResponseListener,responseFailureListener(Optional),headers(Optional);
-	  The listener gives you a FullResponseStructure:
-			FullResponseListener fullResponseListener=new FullResponseListener() {
-           			@Override
-          			public void responseRecieved(FullResponseStructure frs) {
+    });
 
-					Headers headers=frs.headers;
-					String response=frs.body;
-					
-           			 }
-       			 };
-## And Sending a request with headers
-	 Gonnect.sendProRequest(url,cv,fullReponseListener,responseFailureListener(Optional),headers(optional);
-	 The listener gives you a FullResponseStructure:
-			FullResponseListener fullResponseListener=new FullResponseListener() {
-           			@Override
-          			public void responseRecieved(FullResponseStructure frs) {
+### **Sending POST Requests and launching an activity afterwards**
+    ContentValues cv = new ContentValues();
+    cv.put("firstParameter", "someValue");
+    cv.put("secondParameter", "someOtherValue");
+    
+    // "tag" is a unique string for the request, which can be used later to cancel the request
 
-					Headers headers=frs.headers;
-					String response=frs.body;
-					
-           			 }
-       			 };
+    Gonnect.sendCancelableRequestAndLaunchActivity(urlString, cv, tag, exception -> {
+            
+            // This part is called when the request is unsuccessful
+            // "exception" is an instance of IOException
 
- 	  
- 
+    }, DestinationActivity.class, CurrentActivity.this);
+
+The result is automatically saved into the "response" extra string in the destination activity:
+
+    // In DestinationActivity.java
+
+    String response = getIntent().getStringExtra("response")
+
+### **Canceling a request**
+
+    Gonnect.cancelRequest(tag);
+
+## Some other important notes
+
+* Don't forget to add the following line to your project's `AndroidManifest.xml`, above the `<application>` tag:
+
+    `<uses-permission android:name="android.permission.INTERNET" />`
+
+* If you are calling HTTP URLs, which are not as secure as HTTPS calls, you should add the following property inside the `<application>` tag in your project's `AndroidManifest.xml`:
+
+    `android:usesCleartextTraffic="true"`
